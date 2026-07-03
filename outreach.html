@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Outreach — Bridging the Gap Between People and Policy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-900:#0F2038;
+    --navy-800:#173257;
+    --navy-700:#1E3D66;
+    --navy-500:#2C5490;
+    --navy-300:#7C9AC4;
+    --gold-500:#F2A93B;
+    --gold-400:#F6BE5F;
+    --gold-200:#FBDFAD;
+    --sea-600:#1B7A72;
+    --sea-400:#3FA79B;
+    --sea-100:#DCF0EC;
+    --cream-50:#FBF7EC;
+    --cream-100:#F4EEDD;
+    --ink-900:#181C22;
+    --ink-600:#525A66;
+    --ink-400:#8891A0;
+    --line:#E4DCC8;
+    --good:#2E7D5B;
+    --font-display:'Fraunces', serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--font-body);
+    background:var(--cream-50);
+    color:var(--ink-900);
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--gold-200);}
+  a{text-decoration:none;color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+  .app{display:flex;min-height:100vh;}
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;} }
+
+  /* ---------- Background texture ---------- */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.5;
+    background-image:radial-gradient(var(--line) 1px, transparent 1px);
+    background-size:26px 26px;
+    -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,0.55), transparent 340px);
+    mask-image:linear-gradient(180deg, rgba(0,0,0,0.55), transparent 340px);
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    width:246px;
+    flex-shrink:0;
+    background:var(--navy-900);
+    background-image:
+      radial-gradient(420px 220px at 100% 0%, rgba(242,169,59,0.14), transparent 60%),
+      radial-gradient(300px 260px at 0% 100%, rgba(63,167,155,0.12), transparent 60%);
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    padding:22px 16px;
+    position:sticky;
+    top:0;
+    height:100vh;
+    z-index:20;
+  }
+  .brand{display:flex;align-items:center;gap:11px;padding:6px 8px 22px 8px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:18px;}
+  .brand-mark{
+    width:42px;height:42px;border-radius:11px;
+    background:linear-gradient(155deg,var(--gold-400),var(--gold-500));
+    display:flex;align-items:center;justify-content:center;
+    color:var(--navy-900);flex-shrink:0;
+    box-shadow:0 4px 14px rgba(242,169,59,0.35);
+  }
+  .brand-name{font-family:var(--font-display);font-weight:700;font-size:20px;letter-spacing:0.2px;line-height:1;}
+  .brand-tagline{font-size:9.5px;color:var(--gold-400);letter-spacing:1.1px;text-transform:uppercase;margin-top:5px;font-weight:600;line-height:1.4;max-width:150px;}
+
+  .nav{display:flex;flex-direction:column;gap:2px;margin-top:4px;}
+  .nav-item{
+    display:flex;align-items:center;gap:11px;
+    padding:10px 12px;border-radius:9px;
+    color:var(--navy-300);
+    font-size:14px;font-weight:500;
+    border:none;background:transparent;width:100%;text-align:left;
+    transition:background .15s ease, color .15s ease, transform .15s ease;
+  }
+  .nav-item svg{width:17px;height:17px;flex-shrink:0;}
+  .nav-item:hover{background:rgba(255,255,255,0.07);color:#fff;transform:translateX(2px);}
+  .nav-item.active{background:var(--gold-500);color:var(--navy-900);font-weight:700;}
+
+  .sidebar-foot{
+    margin-top:auto;
+    padding:14px 12px;
+    border-top:1px solid rgba(255,255,255,0.1);
+    font-size:11.5px;
+    color:var(--navy-300);
+    line-height:1.5;
+  }
+  .sidebar-foot b{color:#fff;}
+
+  /* ---------- Main ---------- */
+  .main{flex:1;min-width:0;position:relative;z-index:1;}
+  .topbar{
+    display:flex;align-items:center;gap:16px;
+    padding:18px 34px;
+    border-bottom:1px solid var(--line);
+    background:rgba(251,247,236,0.85);
+    backdrop-filter:blur(8px);
+    position:sticky;top:0;z-index:15;
+  }
+  .topbar-brand{display:none;align-items:center;gap:9px;}
+  .topbar-brand .mini-mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(155deg,var(--gold-400),var(--gold-500));display:flex;align-items:center;justify-content:center;color:var(--navy-900);}
+  .topbar-brand .name{font-family:var(--font-display);font-weight:700;font-size:16px;color:var(--navy-900);}
+  .search{
+    flex:1;max-width:420px;
+    display:flex;align-items:center;gap:9px;
+    background:#fff;border:1px solid var(--line);
+    border-radius:10px;padding:9px 13px;
+    color:var(--ink-400);font-size:13.5px;
+  }
+  .search svg{width:15px;height:15px;flex-shrink:0;}
+  .topbar-right{margin-left:auto;display:flex;align-items:center;gap:14px;}
+  .icon-btn{
+    width:36px;height:36px;border-radius:10px;border:1px solid var(--line);
+    background:#fff;display:flex;align-items:center;justify-content:center;color:var(--ink-600);
+    position:relative;
+  }
+  .icon-btn svg{width:16px;height:16px;}
+  .icon-btn .dot{position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--gold-500);border:1.5px solid #fff;}
+  .avatar{
+    width:36px;height:36px;border-radius:50%;
+    background:var(--navy-700);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);font-weight:600;font-size:13px;
+  }
+
+  .view{padding:32px 34px 70px 34px;max-width:1180px;animation:fadeUp .45s ease both;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .eyebrow{
+    font-family:var(--font-mono);font-size:11px;letter-spacing:1.6px;text-transform:uppercase;
+    color:var(--navy-500);margin:0 0 8px 0;display:flex;align-items:center;gap:8px;
+  }
+  .eyebrow::before{content:"";width:18px;height:1.5px;background:var(--gold-500);display:inline-block;}
+  .view h1{
+    font-family:var(--font-display);font-weight:600;font-size:34px;line-height:1.15;
+    margin:0 0 10px 0;color:var(--navy-900);
+  }
+  .view .lede{font-size:15px;color:var(--ink-600);max-width:640px;line-height:1.6;margin:0 0 28px 0;}
+
+  /* ---------- Home hero ---------- */
+  .hero{
+    background:var(--navy-900);
+    background-image:
+      radial-gradient(360px 360px at 100% -10%, rgba(242,169,59,0.28), transparent 65%),
+      radial-gradient(280px 280px at -5% 115%, rgba(63,167,155,0.22), transparent 65%);
+    border-radius:22px;
+    padding:42px 44px;
+    color:#fff;
+    position:relative;
+    overflow:hidden;
+    margin-bottom:0;
+    isolation:isolate;
+  }
+  .hero-arch{
+    position:absolute;right:-40px;bottom:-90px;width:420px;height:420px;opacity:0.55;z-index:0;pointer-events:none;
+  }
+  .hero-inner{position:relative;z-index:1;}
+  .hero-logo-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+  .hero-logo-row .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(155deg,var(--gold-400),var(--gold-500));display:flex;align-items:center;justify-content:center;color:var(--navy-900);}
+  .hero-logo-row .word{font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:0.3px;}
+  .hero-eyebrow{font-family:var(--font-mono);font-size:11.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--gold-400);margin-bottom:14px;font-weight:600;}
+  .hero h1{font-family:var(--font-display);font-size:40px;font-weight:600;line-height:1.16;max-width:580px;margin:0 0 14px 0;}
+  .hero h1 em{font-style:normal;color:var(--gold-400);}
+  .hero p{max-width:480px;color:var(--navy-300);font-size:14.5px;line-height:1.6;margin:0 0 24px 0;}
+  .hero-cta-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .hero-cta{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--gold-500);color:var(--navy-900);
+    font-weight:700;font-size:14px;padding:12px 22px;border-radius:10px;border:none;
+    box-shadow:0 8px 20px rgba(242,169,59,0.28);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .hero-cta:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(242,169,59,0.4);}
+  .hero-cta svg{width:15px;height:15px;}
+  .hero-ghost{display:inline-flex;align-items:center;gap:7px;color:var(--navy-300);font-size:13px;font-weight:600;border:1px solid rgba(255,255,255,0.18);padding:11px 18px;border-radius:10px;}
+  .hero-ghost:hover{color:#fff;border-color:rgba(255,255,255,0.35);}
+  .hero-ghost svg{width:14px;height:14px;}
+
+  /* Bridge divider — signature motif */
+  .bridge-divider{width:100%;height:56px;display:block;margin:6px 0 26px 0;}
+  .bridge-divider path{fill:none;stroke:var(--gold-500);stroke-width:2;stroke-dasharray:2 8;stroke-linecap:round;}
+  .bridge-divider circle{fill:var(--navy-700);}
+
+  .stat-strip{
+    display:grid;grid-template-columns:repeat(5,1fr);
+    gap:1px;background:var(--line);
+    border:1px solid var(--line);border-radius:16px;overflow:hidden;
+    margin-bottom:34px;box-shadow:0 1px 0 rgba(0,0,0,0.02);
+  }
+  .stat{background:#fff;padding:19px 17px;text-align:left;transition:background .15s ease;}
+  .stat:hover{background:var(--cream-100);}
+  .stat .stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .stat .stat-icon{width:26px;height:26px;border-radius:7px;background:var(--cream-100);display:flex;align-items:center;justify-content:center;color:var(--navy-700);}
+  .stat .stat-icon svg{width:13px;height:13px;}
+  .stat .stat-icon.down{background:#FBE7E2;color:#B84B3E;}
+  .stat .n{font-family:var(--font-display);font-size:26px;font-weight:600;color:var(--navy-800);}
+  .stat .n.down{color:#B84B3E;}
+  .stat .l{font-size:11.5px;color:var(--ink-600);margin-top:3px;line-height:1.4;}
+
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;}
+  .section-head h2{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--navy-900);margin:0;}
+  .section-head a{font-size:12.5px;font-weight:600;color:var(--navy-500);display:inline-flex;align-items:center;gap:5px;}
+  .section-head a svg{width:12px;height:12px;}
+
+  /* ---------- Cards / grid ---------- */
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:36px;}
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 22px;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(15,32,56,0.08);border-color:#D9CEB0;}
+  .tag{
+    display:inline-block;font-family:var(--font-mono);font-size:10px;letter-spacing:0.8px;text-transform:uppercase;
+    padding:3px 9px;border-radius:20px;font-weight:600;
+  }
+  .tag.reading{background:#EFE6D6;color:var(--navy-700);}
+  .tag.committee{background:#FBE9C6;color:#8A5A0D;}
+  .tag.passed{background:#DCEFE4;color:var(--good);}
+  .card-title{font-family:var(--font-display);font-size:17px;font-weight:600;margin:10px 0 8px 0;color:var(--navy-900);}
+
+  .toggle-row{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);}
+  .toggle{
+    position:relative;width:40px;height:22px;border-radius:20px;background:var(--line);border:none;flex-shrink:0;
+    transition:background .18s ease;
+  }
+  .toggle.on{background:var(--gold-500);}
+  .toggle .dot{
+    position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;
+    box-shadow:0 1px 3px rgba(0,0,0,0.25);transition:transform .18s ease;
+  }
+  .toggle.on .dot{transform:translateX(18px);}
+  .toggle-label{font-size:12px;font-weight:600;color:var(--ink-600);}
+  .toggle-label b{color:var(--navy-800);}
+  .body-text{font-size:13.5px;line-height:1.65;color:var(--ink-600);margin-top:10px;min-height:64px;}
+  .body-text.official{font-family:var(--font-mono);font-size:12px;line-height:1.7;color:var(--ink-400);}
+
+  /* ---------- Community voices ---------- */
+  .voices-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:10px;}
+  .voice-card{border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#fff;transition:transform .18s ease, box-shadow .18s ease;}
+  .voice-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(15,32,56,0.08);}
+  .voice-thumb{
+    height:126px;display:flex;align-items:center;justify-content:center;position:relative;color:#fff;overflow:hidden;
+  }
+  .voice-thumb::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.14) 1px, transparent 1px);background-size:14px 14px;}
+  .voice-thumb svg{width:34px;height:34px;opacity:0.92;position:relative;z-index:1;}
+  .voice-body{padding:14px 16px;}
+  .voice-body .who{font-size:11px;color:var(--ink-400);font-family:var(--font-mono);}
+  .voice-body .title{font-weight:600;font-size:13.5px;margin-top:3px;color:var(--navy-900);}
+
+  /* ---------- Policies view ---------- */
+  .filters{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;}
+  .chip{
+    padding:8px 15px;border-radius:20px;border:1px solid var(--line);background:#fff;
+    font-size:12.5px;font-weight:600;color:var(--ink-600);transition:all .15s ease;
+  }
+  .chip:hover{border-color:var(--navy-500);}
+  .chip.active{background:var(--navy-900);color:#fff;border-color:var(--navy-900);}
+  .policy-list{display:flex;flex-direction:column;gap:14px;margin-bottom:20px;}
+  .policy-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;transition:box-shadow .18s ease, border-color .18s ease;}
+  .policy-card:hover{box-shadow:0 14px 30px rgba(15,32,56,0.07);border-color:#D9CEB0;}
+  .policy-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
+  .policy-meta{font-family:var(--font-mono);font-size:11px;color:var(--ink-400);margin-top:4px;}
+
+  /* ---------- Parliament view ---------- */
+  .timeline{position:relative;padding-left:26px;}
+  .timeline::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--line);}
+  .t-item{position:relative;padding-bottom:26px;}
+  .t-item::before{
+    content:"";position:absolute;left:-26px;top:4px;width:12px;height:12px;border-radius:50%;
+    background:var(--gold-500);border:3px solid var(--cream-50);box-shadow:0 0 0 2px var(--gold-500);
+  }
+  .t-date{font-family:var(--font-mono);font-size:11px;color:var(--navy-500);margin-bottom:5px;}
+  .t-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;transition:box-shadow .18s ease;}
+  .t-card:hover{box-shadow:0 10px 24px rgba(15,32,56,0.07);}
+  .t-card h3{font-family:var(--font-display);font-size:15.5px;margin:2px 0 6px 0;color:var(--navy-900);}
+  .t-card p{font-size:13px;color:var(--ink-600);line-height:1.55;margin:0;}
+
+  /* ---------- Elections view ---------- */
+  .demo-note{
+    display:flex;gap:10px;align-items:flex-start;background:#FBF0DA;border:1px solid var(--gold-200);
+    border-radius:12px;padding:13px 16px;font-size:12.5px;color:#7A5410;margin-bottom:24px;line-height:1.5;
+  }
+  .demo-note svg{width:16px;height:16px;flex-shrink:0;margin-top:1px;}
+  .party-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:30px;}
+  .party-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;transition:transform .18s ease, box-shadow .18s ease;}
+  .party-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(15,32,56,0.08);}
+  .party-swatch{width:38px;height:38px;border-radius:10px;margin-bottom:12px;}
+  .party-card h3{font-family:var(--font-display);font-size:17px;margin:0 0 6px 0;}
+  .party-card p{font-size:13px;color:var(--ink-600);line-height:1.6;margin:0 0 12px 0;}
+  .pillar-list{display:flex;flex-direction:column;gap:6px;}
+  .pillar{display:flex;gap:8px;font-size:12.5px;color:var(--ink-600);align-items:flex-start;}
+  .pillar svg{width:13px;height:13px;color:var(--navy-500);flex-shrink:0;margin-top:2px;}
+
+  /* ---------- Consultations view ---------- */
+  .poll-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px 28px;margin-bottom:20px;}
+  .poll-q{font-family:var(--font-display);font-size:19px;font-weight:600;color:var(--navy-900);margin:6px 0 4px 0;}
+  .poll-meta{font-size:12px;color:var(--ink-400);margin-bottom:20px;}
+  .poll-opt{margin-bottom:12px;}
+  .poll-opt-btn{
+    width:100%;text-align:left;background:var(--cream-100);border:1px solid var(--line);
+    border-radius:12px;padding:13px 16px;font-size:13.5px;font-weight:600;color:var(--navy-800);
+    display:flex;justify-content:space-between;position:relative;overflow:hidden;
+  }
+  .poll-opt-btn .fill{
+    position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--gold-200),var(--gold-400));
+    width:0%;transition:width .5s cubic-bezier(.2,.8,.3,1);z-index:0;
+  }
+  .poll-opt-btn span{position:relative;z-index:1;}
+  .poll-opt-btn:hover{border-color:var(--gold-500);}
+  .poll-voted-tag{font-size:11px;color:var(--good);font-weight:700;margin-top:10px;display:none;align-items:center;gap:5px;}
+  .poll-voted-tag svg{width:13px;height:13px;}
+
+  /* ---------- Resources view ---------- */
+  .res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .res-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;text-align:left;transition:transform .18s ease, box-shadow .18s ease;}
+  .res-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(15,32,56,0.08);}
+  .res-icon{width:38px;height:38px;border-radius:10px;background:var(--navy-900);display:flex;align-items:center;justify-content:center;color:var(--gold-400);margin-bottom:14px;}
+  .res-icon svg{width:18px;height:18px;}
+  .res-card h3{font-family:var(--font-display);font-size:15.5px;margin:0 0 6px 0;color:var(--navy-900);}
+  .res-card p{font-size:12.5px;color:var(--ink-600);line-height:1.55;margin:0;}
+
+  .hidden{display:none !important;}
+
+  @media(max-width:920px){
+    .sidebar{position:fixed;left:-246px;transition:left .2s ease;z-index:50;}
+    .sidebar.open{left:0;}
+    .grid,.party-grid,.voices-strip,.res-grid{grid-template-columns:1fr;}
+    .stat-strip{grid-template-columns:repeat(2,1fr);}
+    .stat:nth-child(5){grid-column:span 2;}
+    .view{padding:22px 18px 60px 18px;}
+    .hero{padding:30px 22px;}
+    .hero h1{font-size:28px;}
+    .topbar{padding:14px 18px;}
+    .menu-btn{display:flex !important;}
+    .topbar-brand{display:flex !important;}
+    .search{max-width:none;}
+  }
+  .menu-btn{display:none;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:#fff;align-items:center;justify-content:center;flex-shrink:0;}
+  .menu-btn svg{width:17px;height:17px;}
+  .sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(15,32,56,0.4);z-index:40;}
+  .sidebar-backdrop.show{display:block;}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark" id="icon-bridge"></div>
+      <div>
+        <div class="brand-name">Outreach</div>
+        <div class="brand-tagline">Bridging the gap between people &amp; policy</div>
+      </div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="sidebar-foot">
+      Prototype build for the <b>Outreach Challenge</b> — demo data, not live government feeds.
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <button class="menu-btn" id="menuBtn"></button>
+      <div class="topbar-brand">
+        <div class="mini-mark" id="icon-bridge-mini"></div>
+        <div class="name">Outreach</div>
+      </div>
+      <div class="search" id="searchIcon">
+        Search policies, bills, candidates…
+      </div>
+      <div class="topbar-right">
+        <div class="icon-btn" id="bellIcon"><div class="dot"></div></div>
+        <div class="avatar">JD</div>
+      </div>
+    </div>
+
+    <div id="views"></div>
+  </div>
+</div>
+
+<script>
+/* ---------------- Inline icon set (self-contained, no external CDN) ---------------- */
+const ICONS = {
+  home: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/>',
+  'file-text': '<path d="M6 2.5h7l4.5 4.5V21a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1z"/><path d="M13 2.5V7h4.5"/><path d="M8 12.5h8M8 16.5h8M8 8.5h3"/>',
+  landmark: '<path d="M3 10h18M4 10v10M9 10v10M15 10v10M20 10v10M12 3l9.5 5.5H2.5L12 3z"/><path d="M2.5 21h19"/>',
+  vote: '<path d="M4 9.5h16V20H4z"/><path d="M8.5 9.5 9.7 3h4.6l1.2 6.5"/><path d="M9 14l2.3 2.3L15.5 12"/>',
+  'message-square': '<path d="M4 4.5h16v12H8.5L4 20.5z"/>',
+  'graduation-cap': '<path d="M2 8.5 12 3.5l10 5L12 13.5l-10-5z"/><path d="M6.5 10.8v5.2c0 1.7 2.9 3.2 5.5 3.2s5.5-1.5 5.5-3.2v-5.2"/><path d="M22 8.5v6.5"/>',
+  menu: '<path d="M3 6h18M3 12h18M3 18h18"/>',
+  bell: '<path d="M6 8.5a6 6 0 0 1 12 0c0 5.2 2 6.3 2 6.3H4s2-1.1 2-6.3z"/><path d="M10 19.5a2 2 0 0 0 4 0"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+  'arrow-right': '<path d="M4 12h16M13 5l7 7-7 7"/>',
+  'play-circle': '<circle cx="12" cy="12" r="9.5"/><path d="M10 8.3l6.2 3.7-6.2 3.7V8.3z"/>',
+  check: '<path d="M4 12.5l5.5 5.5L20 6.5"/>',
+  info: '<circle cx="12" cy="12" r="9.5"/><path d="M12 8h.01"/><path d="M11 11.5h1.3v5.5"/>',
+  'check-circle': '<circle cx="12" cy="12" r="9.5"/><path d="M7.8 12.3l2.8 2.8 5.6-6.2"/>',
+  'book-open': '<path d="M12 5.2C9.9 3.6 6 3.1 3 3.6v14.7c3-.5 6.9 0 9 1.6 2.1-1.6 6-2.1 9-1.6V3.6c-3-.5-6.9 0-9 1.6z"/><path d="M12 5.2v14.7"/>',
+  users: '<circle cx="8.5" cy="8" r="3.3"/><path d="M2.3 20.2c0-3.6 2.9-6.2 6.2-6.2s6.2 2.6 6.2 6.2"/><circle cx="17.3" cy="9" r="2.7"/><path d="M14.6 14.2c2.5.3 4.6 2.5 4.6 6"/>',
+  'shield-check': '<path d="M12 3 20 6.2v5.6c0 5.2-3.5 8.4-8 9.5-4.5-1.1-8-4.3-8-9.5V6.2L12 3z"/><path d="M8.3 12.2l2.6 2.6 4.8-5.4"/>',
+  presentation: '<path d="M2.5 4h19M4 4v11.5h16V4"/><path d="M9 20l3-4.5 3 4.5"/><path d="M12 15.5V20"/>',
+  mic: '<rect x="9" y="2.5" width="6" height="11.5" rx="3"/><path d="M4.8 11a7.2 7.2 0 0 0 14.4 0"/><path d="M12 18.5v3"/>',
+  'bar-chart-3': '<path d="M4 20V10M12 20V4M20 20v-7"/>',
+  'trending-down': '<path d="M3 7l7 7 4-4 8 8"/><path d="M15.5 17.7H22V11.2"/>',
+  'user-search': '<circle cx="9.5" cy="7.5" r="3.5"/><path d="M2.5 20.2c0-3.9 3.1-6.7 7-6.7 1 0 1.9.2 2.7.5"/><circle cx="17.5" cy="16.5" r="3"/><path d="M21.5 20.5l-2-2"/>',
+  megaphone: '<path d="M3 10v4a1 1 0 0 0 1 1h2l1.5 5H10l-1-5h2l8 3.5V6.5L11 10H6a1 1 0 0 0-1 0"/><path d="M3 10h3v4H3z"/>',
+};
+function icon(name, size=17){
+  const body = ICONS[name] || '';
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+}
+
+/* Bridge + people brand mark, matching the concept deck's logo */
+function brandMark(fg='#0F2038'){
+  return `<svg viewBox="0 0 40 40" width="24" height="24" fill="none">
+    <path d="M6 27c4-9 9.5-14 14-14s10 5 14 14" stroke="${fg}" stroke-width="2.6" stroke-linecap="round"/>
+    <circle cx="12.5" cy="17" r="2.6" fill="${fg}"/><path d="M9 27c0-3.6 1.6-6 3.5-6s3.5 2.4 3.5 6" stroke="${fg}" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <circle cx="27.5" cy="17" r="2.6" fill="${fg}"/><path d="M24 27c0-3.6 1.6-6 3.5-6s3.5 2.4 3.5 6" stroke="${fg}" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <circle cx="20" cy="11.5" r="3.1" fill="${fg}"/><path d="M15.5 24c0-4.2 2-7 4.5-7s4.5 2.8 4.5 7" stroke="${fg}" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+  </svg>`;
+}
+
+function bridgeDivider(){
+  return `<svg class="bridge-divider" viewBox="0 0 1180 56" preserveAspectRatio="none">
+    <path d="M0 46 C 200 6, 980 6, 1180 46" />
+    <circle cx="90" cy="34.5" r="3"/><circle cx="300" cy="15" r="3"/><circle cx="590" cy="8" r="3"/><circle cx="880" cy="15" r="3"/><circle cx="1090" cy="34.5" r="3"/>
+  </svg>`;
+}
+
+function heroArch(){
+  return `<svg class="hero-arch" viewBox="0 0 420 420" fill="none">
+    <path d="M20 300c60-140 160-220 190-220s130 80 190 220" stroke="#F2A93B" stroke-width="2" stroke-opacity="0.5"/>
+    <path d="M60 320c50-120 130-190 150-190s100 70 150 190" stroke="#3FA79B" stroke-width="2" stroke-opacity="0.35"/>
+  </svg>`;
+}
+
+/* ---------------- Data ---------------- */
+const NAV = [
+  {id:'home', label:'Home', icon:'home'},
+  {id:'policies', label:'Policies', icon:'file-text'},
+  {id:'parliament', label:'Parliament', icon:'landmark'},
+  {id:'elections', label:'Elections', icon:'vote'},
+  {id:'consultations', label:'Consultations', icon:'message-square'},
+  {id:'resources', label:'Resources', icon:'graduation-cap'},
+];
+
+const STATS = [
+  {n:'42%', l:'2026 voter turnout', down:true, icon:'trending-down'},
+  {n:'72.7%', l:'of survey respondents did not vote', icon:'vote'},
+  {n:'72.7%', l:'lacked information about candidates', icon:'user-search'},
+  {n:'63.6%', l:'lacked information about political parties', icon:'landmark'},
+  {n:'54.5%', l:'felt their vote would not make a difference', icon:'megaphone'},
+];
+
+const POLICIES = [
+  {
+    tag:'committee', tagLabel:'In Committee',
+    title:'Fisheries (Amendment) Bill 2026',
+    meta:'Ministry of Maritime Affairs & the Blue Economy · Updated 3 days ago',
+    plain:"This bill updates the rules for who can fish in Barbadian waters and how catches get reported. Fishermen would need to log catches digitally, and new protected zones would limit fishing in a few reef areas to help fish stocks recover.",
+    official:"AN ACT to amend the Fisheries Act, Cap. 391 to provide for mandatory electronic catch documentation, to establish designated marine conservation zones pursuant to Section 14(2), and to revise penalty provisions under Part IV for non-compliance with reporting obligations."
+  },
+  {
+    tag:'reading', tagLabel:'2nd Reading',
+    title:'National Digital Identity Framework',
+    meta:'Ministry of Innovation, Science & Smart Technology · Updated 1 week ago',
+    plain:"This creates one secure digital ID Barbadians can use to access government services online — renewing a licence, applying for benefits, or paying taxes — without repeating the same paperwork at every office.",
+    official:"AN ACT to establish a National Digital Identity Framework, to provide for a unique digital identifier for each citizen and resident, to authorise inter-ministerial data-sharing arrangements subject to the Data Protection Act, 2019, and for related matters."
+  },
+  {
+    tag:'reading', tagLabel:'1st Reading',
+    title:'Renewable Energy Transition Policy',
+    meta:'Ministry of Energy & Water Resources · Updated 2 weeks ago',
+    plain:"Sets a target for 100% renewable electricity by 2030, with rebates for households installing solar panels and new rules requiring large buildings to add solar or battery storage.",
+    official:"A POLICY instrument establishing sequenced renewable-energy generation targets, fiscal incentive schedules under the Fiscal Incentives Act, and minimum on-site generation requirements for commercial structures exceeding 5,000 sq. ft."
+  },
+  {
+    tag:'passed', tagLabel:'Passed',
+    title:'Youth Employment Support Programme',
+    meta:'Ministry of Labour & Social Partnership Relations · Passed last month',
+    plain:"Funds six-month paid placements for young people (18–29) at local businesses, with the government covering part of the wage so more employers can afford to train new workers.",
+    official:"AN ACT to establish a wage-subsidy scheme for persons aged 18 to 29 engaged in approved workplace placements not exceeding twenty-six weeks, administered jointly by the National Insurance Office and participating employers."
+  },
+];
+
+const VOICES = [
+  {who:'Fish Market, Bridgetown', title:'What the Fisheries Bill means for vendors', color:'linear-gradient(135deg,#1E3D66,#2C5490)'},
+  {who:'Community Nurse, St. Michael', title:'Digital ID at the polyclinic — explained', color:'linear-gradient(135deg,#173257,#3FA79B)'},
+  {who:'Small Business Owner, Oistins', title:'Solar rebates: is it worth it?', color:'linear-gradient(135deg,#8A5A0D,#F2A93B)'},
+];
+
+const PARLIAMENT = [
+  {date:'Jun 28, 2026', title:'Fisheries (Amendment) Bill — Committee Stage', body:'Referred to the Select Committee on Maritime Affairs for review of catch-reporting and marine zone clauses.'},
+  {date:'Jun 21, 2026', title:'Budgetary Debate — Day 3', body:'Ministers responded to questions on healthcare and infrastructure allocations for the coming fiscal year.'},
+  {date:'Jun 14, 2026', title:'Digital Identity Framework — Second Reading', body:'General debate opened on the scope of data-sharing provisions between ministries.'},
+  {date:'Jun 02, 2026', title:'Youth Employment Support Programme — Royal Assent', body:'Programme signed into law; applications for employer participation open in August.'},
+];
+
+const PARTIES = [
+  {name:'Party A (Demo)', color:'#1E3D66', focus:'Illustrative sample profile', pillars:['Economic diversification & small business support','Expanded healthcare access island-wide','Climate resilience for coastal communities']},
+  {name:'Party B (Demo)', color:'#8A5A0D', focus:'Illustrative sample profile', pillars:['Digital government services','Youth employment & vocational training','Renewable energy transition']},
+];
+
+const RESOURCES = [
+  {icon:'book-open', title:'How a Bill Becomes Law', body:'A five-minute walkthrough of the parliamentary process, from First Reading to Royal Assent.'},
+  {icon:'users', title:'Know Your Constituency', body:'Look up your constituency, sitting representative, and upcoming local consultations.'},
+  {icon:'shield-check', title:'Spotting Misinformation', body:'A short guide for checking claims about candidates and policy before sharing them.'},
+  {icon:'presentation', title:'Civics for the Classroom', body:'Lesson plans for schools covering elections, parliament, and public consultation.'},
+  {icon:'mic', title:'Become a Community Voice', body:"Apply to help explain a policy from your neighbourhood's perspective."},
+  {icon:'bar-chart-3', title:'Past Consultation Results', body:'Browse how previous public consultations shaped final government decisions.'},
+];
+
+/* ---------------- Render helpers ---------------- */
+function renderNav(active){
+  document.getElementById('nav').innerHTML = NAV.map(n => `
+    <button class="nav-item ${n.id===active?'active':''}" data-view="${n.id}">
+      ${icon(n.icon)}<span>${n.label}</span>
+    </button>`).join('');
+}
+
+function renderHome(){
+  return `
+    <div class="hero">
+      ${heroArch()}
+      <div class="hero-inner">
+        <div class="hero-logo-row">
+          <div class="mark">${brandMark('#0F2038')}</div>
+          <div class="word">OUTREACH</div>
+        </div>
+        <div class="hero-eyebrow">Bridging the gap between people and policy</div>
+        <h1>Know more. Engage more.<br><em>Make an impact.</em></h1>
+        <p>Outreach turns government policy, parliament and elections into plain language — then gives you a direct line to weigh in.</p>
+        <div class="hero-cta-row">
+          <button class="hero-cta" data-view="policies">${icon('arrow-right',15)} Explore what's happening this week</button>
+          <button class="hero-ghost" data-view="consultations">${icon('message-square',14)} Have your say</button>
+        </div>
+      </div>
+    </div>
+
+    ${bridgeDivider()}
+
+    <div class="stat-strip">
+      ${STATS.map(s => `<div class="stat"><div class="stat-top"><div class="stat-icon ${s.down?'down':''}">${icon(s.icon,13)}</div></div><div class="n ${s.down?'down':''}">${s.n}</div><div class="l">${s.l}</div></div>`).join('')}
+    </div>
+
+    <div class="section-head">
+      <h2>Trending policies</h2>
+      <a href="#" data-view="policies">See all ${icon('arrow-right',12)}</a>
+    </div>
+    <div class="grid">
+      ${POLICIES.slice(0,2).map((p,i)=>policyCard(p,i)).join('')}
+    </div>
+
+    <div class="section-head">
+      <h2>Community Voices</h2>
+      <a href="#">See all ${icon('arrow-right',12)}</a>
+    </div>
+    <div class="voices-strip">
+      ${VOICES.map(v => `
+        <div class="voice-card">
+          <div class="voice-thumb" style="background:${v.color}">${icon('play-circle',34)}</div>
+          <div class="voice-body">
+            <div class="who">${v.who}</div>
+            <div class="title">${v.title}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+  `;
+}
+
+function policyCard(p, i){
+  return `
+    <div class="card">
+      <span class="tag ${p.tag}">${p.tagLabel}</span>
+      <div class="card-title">${p.title}</div>
+      <div class="policy-meta">${p.meta}</div>
+      <div class="toggle-row">
+        <button class="toggle" data-toggle="${p.tag}-${i}"><div class="dot"></div></button>
+        <div class="toggle-label" data-label="${p.tag}-${i}">Official text · tap for <b>plain language</b></div>
+      </div>
+      <div class="body-text official" data-body="${p.tag}-${i}">${p.official}</div>
+    </div>
+  `;
+}
+
+function renderPolicies(){
+  return `
+    <div class="eyebrow">Policies & legislation</div>
+    <h1>What government is working on, in plain language</h1>
+    <p class="lede">Every bill and policy is summarised in everyday terms alongside the official wording — so you can decide for yourself, quickly.</p>
+    <div class="filters">
+      <div class="chip active">All</div>
+      <div class="chip">In Committee</div>
+      <div class="chip">2nd Reading</div>
+      <div class="chip">1st Reading</div>
+      <div class="chip">Passed</div>
+    </div>
+    <div class="policy-list">
+      ${POLICIES.map((p,i)=>`
+        <div class="policy-card">
+          <div class="policy-top">
+            <div>
+              <span class="tag ${p.tag}">${p.tagLabel}</span>
+              <div class="card-title">${p.title}</div>
+              <div class="policy-meta">${p.meta}</div>
+            </div>
+          </div>
+          <div class="toggle-row">
+            <button class="toggle" data-toggle="full-${i}"><div class="dot"></div></button>
+            <div class="toggle-label" data-label="full-${i}">Official text · tap for <b>plain language</b></div>
+          </div>
+          <div class="body-text official" data-body="full-${i}">${p.official}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderParliament(){
+  return `
+    <div class="eyebrow">Parliament</div>
+    <h1>What happened on the floor, summarised</h1>
+    <p class="lede">A running record of sittings, bills and debates — condensed to what actually changes for citizens.</p>
+    <div class="timeline">
+      ${PARLIAMENT.map(item => `
+        <div class="t-item">
+          <div class="t-date">${item.date}</div>
+          <div class="t-card">
+            <h3>${item.title}</h3>
+            <p>${item.body}</p>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderElections(){
+  return `
+    <div class="eyebrow">Elections</div>
+    <h1>Candidates and parties, explained</h1>
+    <p class="lede">Neutral, side-by-side summaries of party platforms — sourced from published manifestos, not campaign messaging.</p>
+    <div class="demo-note">${icon('info',16)} <div>Sample profiles shown for demo purposes only — party names and platforms below are illustrative placeholders, not real electoral data.</div></div>
+    <div class="party-grid">
+      ${PARTIES.map(p => `
+        <div class="party-card">
+          <div class="party-swatch" style="background:${p.color}"></div>
+          <h3>${p.name}</h3>
+          <p>${p.focus}</p>
+          <div class="pillar-list">
+            ${p.pillars.map(pl => `<div class="pillar">${icon('check',13)}<span>${pl}</span></div>`).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+const POLL = {
+  q:"Should single-use plastic bag imports be phased out by 2027?",
+  meta:"Public Consultation · Ministry of Environment · 1,204 responses so far · Closes Jul 20, 2026",
+  options:[
+    {label:'Yes, phase it out by 2027', pct:64},
+    {label:'Yes, but on a longer timeline', pct:22},
+    {label:'No, keep the current rules', pct:14},
+  ]
+};
+
+function renderConsultations(){
+  return `
+    <div class="eyebrow">Public consultations</div>
+    <h1>Have your say on what's being decided</h1>
+    <p class="lede">Vote in live consultations and see how your community is responding, in real time.</p>
+    <div class="poll-card">
+      <span class="tag reading">Open now</span>
+      <div class="poll-q">${POLL.q}</div>
+      <div class="poll-meta">${POLL.meta}</div>
+      <div id="pollOptions">
+        ${POLL.options.map((o,i) => `
+          <div class="poll-opt">
+            <button class="poll-opt-btn" data-poll-i="${i}">
+              <div class="fill" data-poll-fill="${i}"></div>
+              <span>${o.label}</span>
+              <span data-poll-pct="${i}"></span>
+            </button>
+          </div>
+        `).join('')}
+      </div>
+      <div class="poll-voted-tag" id="pollVoted">${icon('check-circle',13)} Thanks — your response has been recorded.</div>
+    </div>
+  `;
+}
+
+function renderResources(){
+  return `
+    <div class="eyebrow">Civic education</div>
+    <h1>Resources for citizens, schools & educators</h1>
+    <p class="lede">Short, practical guides for understanding how government works and how to take part.</p>
+    <div class="res-grid">
+      ${RESOURCES.map(r => `
+        <div class="res-card">
+          <div class="res-icon">${icon(r.icon,18)}</div>
+          <h3>${r.title}</h3>
+          <p>${r.body}</p>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+const VIEWS = {
+  home: renderHome,
+  policies: renderPolicies,
+  parliament: renderParliament,
+  elections: renderElections,
+  consultations: renderConsultations,
+  resources: renderResources,
+};
+
+let voted = false;
+
+function attachInteractions(){
+  // Plain-language toggles
+  document.querySelectorAll('[data-toggle]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.getAttribute('data-toggle');
+      const body = document.querySelector(`[data-body="${key}"]`);
+      const label = document.querySelector(`[data-label="${key}"]`);
+      const isOn = btn.classList.toggle('on');
+      const idx = key.split('-').pop();
+      const source = POLICIES[idx] || POLICIES[0];
+      if(isOn){
+        body.classList.remove('official');
+        label.innerHTML = 'Plain language · tap for <b>official text</b>';
+        body.textContent = source.plain;
+      } else {
+        body.classList.add('official');
+        label.innerHTML = 'Official text · tap for <b>plain language</b>';
+        body.textContent = source.official;
+      }
+    });
+  });
+
+  // Filter chips (visual only)
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+
+  // Poll voting
+  document.querySelectorAll('[data-poll-i]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if(voted) return;
+      voted = true;
+      const chosen = parseInt(btn.getAttribute('data-poll-i'));
+      POLL.options[chosen].pct += 3;
+      const total = POLL.options.reduce((a,o)=>a+o.pct,0);
+      POLL.options.forEach((o,i) => {
+        const pct = Math.round((o.pct/total)*100);
+        document.querySelector(`[data-poll-fill="${i}"]`).style.width = pct + '%';
+        document.querySelector(`[data-poll-pct="${i}"]`).textContent = pct + '%';
+      });
+      document.getElementById('pollVoted').style.display = 'flex';
+    });
+  });
+}
+
+function navigate(view){
+  renderNav(view);
+  document.getElementById('views').innerHTML = `<div class="view">${VIEWS[view]()}</div>`;
+  attachInteractions();
+  closeSidebar();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarBackdrop').classList.remove('show');
+}
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarBackdrop').classList.add('show');
+}
+
+document.addEventListener('click', (e) => {
+  const target = e.target.closest('[data-view]');
+  if(target){
+    e.preventDefault();
+    navigate(target.getAttribute('data-view'));
+  }
+});
+
+document.getElementById('menuBtn').innerHTML = icon('menu',17);
+document.getElementById('menuBtn').addEventListener('click', openSidebar);
+document.getElementById('sidebarBackdrop').addEventListener('click', closeSidebar);
+document.getElementById('bellIcon').prepend(document.createRange().createContextualFragment(icon('bell',16)));
+document.getElementById('searchIcon').innerHTML = icon('search',15) + '<span>Search policies, bills, candidates…</span>';
+document.getElementById('icon-bridge').innerHTML = brandMark('#0F2038');
+document.getElementById('icon-bridge-mini').innerHTML = brandMark('#0F2038');
+
+navigate('home');
+</script>
+</body>
+</html>
